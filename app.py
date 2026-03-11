@@ -2,7 +2,9 @@ import streamlit as st
 
 st.title("単位換算ツール")
 
+# -------------------------
 # 単位データ（SI基準）
+# -------------------------
 units = {
     "長さ": {
         "m": 1,
@@ -44,29 +46,65 @@ units = {
     }
 }
 
+# -------------------------
 # カテゴリ選択
+# -------------------------
 category = st.selectbox("カテゴリ", list(units.keys()))
 
 unit_list = list(units[category].keys())
 
+# -------------------------
+# セッション初期化
+# -------------------------
+if "from_unit" not in st.session_state:
+    st.session_state.from_unit = unit_list[0]
+
+if "to_unit" not in st.session_state:
+    st.session_state.to_unit = unit_list[1]
+
+# -------------------------
 # 入力
+# -------------------------
 value = st.number_input("値を入力", value=0.0)
 
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns([3,1,3])
 
 with col1:
-    from_unit = st.selectbox("変換前単位", unit_list)
+    from_unit = st.selectbox(
+        "変換前単位",
+        unit_list,
+        index=unit_list.index(st.session_state.from_unit)
+    )
 
 with col2:
-    to_unit = st.selectbox("変換後単位", unit_list)
+    if st.button("⇄"):
+        st.session_state.from_unit, st.session_state.to_unit = (
+            st.session_state.to_unit,
+            st.session_state.from_unit
+        )
+        st.rerun()
 
-# 変換
+with col3:
+    to_unit = st.selectbox(
+        "変換後単位",
+        unit_list,
+        index=unit_list.index(st.session_state.to_unit)
+    )
+
+st.session_state.from_unit = from_unit
+st.session_state.to_unit = to_unit
+
+# -------------------------
+# 変換処理
+# -------------------------
 if st.button("変換"):
 
     base_value = value * units[category][from_unit]
 
     result = base_value / units[category][to_unit]
 
-    st.subheader("変換結果")
+    # 指数禁止＋小数最大4桁
+    formatted = f"{result:.4f}".rstrip("0").rstrip(".")
 
-    st.write(f"{result:.4g} {to_unit}")
+    st.subheader("変換結果")
+    st.write(f"{formatted} {to_unit}")
