@@ -163,6 +163,3 @@ if st.session_state.result is not None:
     st.subheader("変換結果")
 
     st.code(f"{formatted} {to_unit}")
-
-    )
-
