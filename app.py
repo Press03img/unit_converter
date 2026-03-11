@@ -113,13 +113,22 @@ value = st.number_input("値", value=1.0)
 
 col1, col2, col3 = st.columns([4,1,4])
 
-
 with col1:
     from_unit = st.selectbox(
         "変換元",
         unit_list,
         index=unit_list.index(st.session_state.from_unit)
     )
+
+with col2:
+    st.write("")  # 高さ調整
+    st.write("")
+    if st.button("🔁"):
+        st.session_state.from_unit, st.session_state.to_unit = (
+            st.session_state.to_unit,
+            st.session_state.from_unit
+        )
+        st.rerun()
 
 with col3:
     to_unit = st.selectbox(
@@ -195,3 +204,4 @@ if st.button("変換"):
     """
 
     components.html(copy_html, height=40)
+
