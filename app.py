@@ -164,7 +164,5 @@ if st.session_state.result is not None:
 
     st.code(f"{formatted} {to_unit}")
 
-    st.button(
-        "📋 結果コピー",
-        key="copy_button"
     )
+
