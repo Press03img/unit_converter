@@ -1,126 +1,128 @@
 import streamlit as st
-import streamlit.components.v1 as components
 
-st.set_page_config(page_title="単位換算ツール", layout="centered")
+st.set_page_config(page_title="Unit Converter", layout="centered")
 
-st.title("単位換算ツール")
+# ==============================
+# 数値表示フォーマット
+# ==============================
+def format_number(x):
+    s = f"{x:.4f}"
+    s = s.rstrip("0").rstrip(".")
+    if s == "-0":
+        s = "0"
+    return s
 
 
 # ==============================
-# 表示フォーマット
+# 単位データ
 # ==============================
-
-def format_number(value):
-    text = f"{value:.4f}"
-    text = text.rstrip("0")
-    text = text.rstrip(".")
-    return text
-
-
-# ==============================
-# 単位定義
-# ==============================
-
-unit_categories = {
-
+units = {
     "長さ": {
         "mm": 0.001,
         "cm": 0.01,
         "m": 1,
         "km": 1000,
-        "inch": 0.0254,
+        "in": 0.0254,
         "ft": 0.3048
     },
-
     "質量": {
         "g": 0.001,
         "kg": 1,
         "t": 1000,
-        "lb": 0.453592
+        "lb": 0.45359237
     },
-
-    "力・重量": {
+    "力": {
         "N": 1,
         "kN": 1000,
         "kgf": 9.80665
     },
-
-    "速度": {
-        "m/s": 1,
-        "km/h": 0.277778,
-        "ft/s": 0.3048
-    },
-
     "圧力・応力": {
         "Pa": 1,
         "kPa": 1000,
-        "MPa": 1e6,
-        "bar": 1e5,
-        "kgf/cm2": 98066.5,
-        "psi": 6894.76
+        "MPa": 1000000,
+        "N/mm²": 1000000,
+        "bar": 100000,
+        "kgf/cm²": 98066.5
     },
-
-    "モーメント・トルク": {
-        "N·mm": 0.001,
-        "N·cm": 0.01,
-        "N·m": 1,
-        "kN·m": 1000,
-        "kgf·m": 9.80665
+    "速度": {
+        "m/s": 1,
+        "km/h": 0.277777778
     },
-
-    "温度": {
-        "C": "C",
-        "K": "K",
-        "F": "F"
-    },
-
     "密度": {
-        "kg/m3": 1,
-        "g/cm3": 1000
+        "kg/m³": 1,
+        "g/cm³": 1000
+    },
+    "トルク": {
+        "N·m": 1,
+        "N·cm": 0.01,
+        "N·mm": 0.001
     }
 }
 
+# ==============================
+# 初期状態
+# ==============================
+if "from_unit" not in st.session_state:
+    st.session_state.from_unit = "mm"
+
+if "to_unit" not in st.session_state:
+    st.session_state.to_unit = "cm"
+
+if "result" not in st.session_state:
+    st.session_state.result = None
+
 
 # ==============================
-# カテゴリ選択
+# タイトル
 # ==============================
+st.title("単位変換ツール")
 
+
+# ==============================
+# カテゴリ
+# ==============================
 category = st.selectbox(
     "カテゴリ",
-    list(unit_categories.keys())
+    list(units.keys()),
+    key="category_box"
 )
 
-unit_dict = unit_categories[category]
-unit_list = list(unit_dict.keys())
+unit_list = list(units[category].keys())
 
-
-# ==============================
-# session_state 保護
-# ==============================
-
-if "from_unit" not in st.session_state or st.session_state.from_unit not in unit_list:
+if st.session_state.from_unit not in unit_list:
     st.session_state.from_unit = unit_list[0]
 
-if "to_unit" not in st.session_state or st.session_state.to_unit not in unit_list:
-    st.session_state.to_unit = unit_list[1] if len(unit_list) > 1 else unit_list[0]
+if st.session_state.to_unit not in unit_list:
+    st.session_state.to_unit = unit_list[1]
 
 
 # ==============================
 # 入力
 # ==============================
+value = st.number_input(
+    "値",
+    value=0.0,
+    step=1.0,
+    key="input_value"
+)
 
-value = st.number_input("値", value=1.0)
 
+# ==============================
+# 単位選択
+# ==============================
 col1, col2, col3 = st.columns([4,1,4])
 
 with col1:
     from_unit = st.selectbox(
         "変換元",
         unit_list,
-        index=unit_list.index(st.session_state.from_unit)
+        index=unit_list.index(st.session_state.from_unit),
+        key="from_unit_box"
     )
 
 with col2:
+    st.write("")
+    st.write("")
     if st.button("🔁", key="swap_button"):
         st.session_state.from_unit, st.session_state.to_unit = (
             st.session_state.to_unit,
@@ -132,75 +134,37 @@ with col3:
     to_unit = st.selectbox(
         "変換先",
         unit_list,
-        index=unit_list.index(st.session_state.to_unit)
+        index=unit_list.index(st.session_state.to_unit),
+        key="to_unit_box"
     )
-
-
-# ==============================
-# 🔁 単位入替
-# ==============================
-
-with col2:
-    if st.button("🔁"):
-        st.session_state.from_unit, st.session_state.to_unit = (
-            st.session_state.to_unit,
-            st.session_state.from_unit
-        )
-        st.rerun()
-
 
 st.session_state.from_unit = from_unit
 st.session_state.to_unit = to_unit
 
 
 # ==============================
-# 変換処理
+# 変換ボタン
 # ==============================
+if st.button("変換", key="convert_button"):
 
-result = None
+    base_value = value * units[category][from_unit]
+    result = base_value / units[category][to_unit]
 
-if st.button("変換"):
-
-    if category == "温度":
-
-        if from_unit == "C":
-            base = value + 273.15
-        elif from_unit == "F":
-            base = (value - 32) * 5/9 + 273.15
-        else:
-            base = value
-
-        if to_unit == "C":
-            result = base - 273.15
-        elif to_unit == "F":
-            result = (base - 273.15) * 9/5 + 32
-        else:
-            result = base
-
-    else:
-
-        base = value * unit_dict[from_unit]
-        result = base / unit_dict[to_unit]
-
-    formatted = format_number(result)
-
-    st.subheader("結果")
-
-    result_text = f"{formatted} {to_unit}"
-
-    st.success(result_text)
+    st.session_state.result = result
 
 
 # ==============================
-# 📋 コピー機能
+# 結果表示
 # ==============================
+if st.session_state.result is not None:
 
-    copy_html = f"""
-    <button onclick="navigator.clipboard.writeText('{result_text}')">
-    📋 結果をコピー
-    </button>
-    """
+    formatted = format_number(st.session_state.result)
 
-    components.html(copy_html, height=40)
+    st.subheader("変換結果")
 
+    st.code(f"{formatted} {to_unit}")
 
+    st.button(
+        "📋 結果コピー",
+        key="copy_button"
+    )
