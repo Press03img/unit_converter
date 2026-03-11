@@ -121,9 +121,7 @@ with col1:
     )
 
 with col2:
-    st.write("")  # 高さ調整
-    st.write("")
-    if st.button("🔁"):
+    if st.button("🔁", key="swap_button"):
         st.session_state.from_unit, st.session_state.to_unit = (
             st.session_state.to_unit,
             st.session_state.from_unit
@@ -204,4 +202,5 @@ if st.button("変換"):
     """
 
     components.html(copy_html, height=40)
+
 
