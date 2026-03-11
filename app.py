@@ -1,8 +1,21 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
 st.set_page_config(page_title="単位換算ツール", layout="centered")
 
 st.title("単位換算ツール")
+
+
+# ==============================
+# 表示フォーマット
+# ==============================
+
+def format_number(value):
+    text = f"{value:.4f}"
+    text = text.rstrip("0")
+    text = text.rstrip(".")
+    return text
+
 
 # ==============================
 # 単位定義
@@ -67,17 +80,19 @@ unit_categories = {
     }
 }
 
+
 # ==============================
 # カテゴリ選択
 # ==============================
 
 category = st.selectbox(
-    "カテゴリを選択",
+    "カテゴリ",
     list(unit_categories.keys())
 )
 
 unit_dict = unit_categories[category]
 unit_list = list(unit_dict.keys())
+
 
 # ==============================
 # session_state 保護
@@ -89,13 +104,15 @@ if "from_unit" not in st.session_state or st.session_state.from_unit not in unit
 if "to_unit" not in st.session_state or st.session_state.to_unit not in unit_list:
     st.session_state.to_unit = unit_list[1] if len(unit_list) > 1 else unit_list[0]
 
+
 # ==============================
-# UI
+# 入力
 # ==============================
 
-value = st.number_input("値を入力", value=1.0)
+value = st.number_input("値", value=1.0)
 
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns([4,1,4])
+
 
 with col1:
     from_unit = st.selectbox(
@@ -104,19 +121,36 @@ with col1:
         index=unit_list.index(st.session_state.from_unit)
     )
 
-with col2:
+with col3:
     to_unit = st.selectbox(
         "変換先",
         unit_list,
         index=unit_list.index(st.session_state.to_unit)
     )
 
+
+# ==============================
+# 🔁 単位入替
+# ==============================
+
+with col2:
+    if st.button("🔁"):
+        st.session_state.from_unit, st.session_state.to_unit = (
+            st.session_state.to_unit,
+            st.session_state.from_unit
+        )
+        st.rerun()
+
+
 st.session_state.from_unit = from_unit
 st.session_state.to_unit = to_unit
+
 
 # ==============================
 # 変換処理
 # ==============================
+
+result = None
 
 if st.button("変換"):
 
@@ -141,9 +175,23 @@ if st.button("変換"):
         base = value * unit_dict[from_unit]
         result = base / unit_dict[to_unit]
 
-    # 指数表示禁止 + 小数4桁
-    formatted = f"{result:.4f}"
+    formatted = format_number(result)
 
-    st.subheader("変換結果")
-    st.success(f"{formatted} {to_unit}")
+    st.subheader("結果")
 
+    result_text = f"{formatted} {to_unit}"
+
+    st.success(result_text)
+
+
+# ==============================
+# 📋 コピー機能
+# ==============================
+
+    copy_html = f"""
+    <button onclick="navigator.clipboard.writeText('{result_text}')">
+    📋 結果をコピー
+    </button>
+    """
+
+    components.html(copy_html, height=40)
