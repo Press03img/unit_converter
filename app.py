@@ -48,6 +48,8 @@ unit_categories = {
     },
 
     "モーメント・トルク": {
+        "N·mm": 0.001,
+        "N·cm": 0.01,
         "N·m": 1,
         "kN·m": 1000,
         "kgf·m": 9.80665
@@ -144,3 +146,4 @@ if st.button("変換"):
 
     st.subheader("変換結果")
     st.success(f"{formatted} {to_unit}")
+
