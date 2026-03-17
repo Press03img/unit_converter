@@ -145,7 +145,7 @@ st.session_state.to_unit = to_unit
 col6, col7 = st.columns([1,1])
 
 with col6:
-    convert_btn = st.button("　　　変換　　　")
+    convert_btn = st.button("　　変換　　")
 
 with col7:
     if convert_btn:
