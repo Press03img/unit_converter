@@ -6,22 +6,21 @@ import streamlit as st
 
 # ==============================
 
-st.markdown("""
-
-<style>
+st.markdown(
+""" <style>
 .main > div {
-    max-width: 600px;
-    margin: auto;
-}
-</style>
-
-""", unsafe_allow_html=True)
+max-width: 600px;
+margin: auto;
+} </style>
+""",
+unsafe_allow_html=True
+)
 
 st.title("単位換算ツール")
 
 # ==============================
 
-# 単位定義（追加反映済）
+# 単位定義
 
 # ==============================
 
@@ -76,7 +75,7 @@ units = {
 
 # ==============================
 
-# 入力値（基準幅）
+# 入力値
 
 # ==============================
 
@@ -85,13 +84,12 @@ with col_input:
 value = st.number_input(
 "値",
 value=0.0,
-step=1.0,
-key="input_value"
+step=1.0
 )
 
 # ==============================
 
-# カテゴリ（同幅）
+# カテゴリ
 
 # ==============================
 
@@ -99,15 +97,14 @@ col_category, _ = st.columns([1, 1])
 with col_category:
 category = st.selectbox(
 "カテゴリ",
-list(units.keys()),
-key="category"
+list(units.keys())
 )
 
 unit_list = list(units[category].keys())
 
 # ==============================
 
-# 初期値保持
+# 初期化
 
 # ==============================
 
@@ -115,11 +112,11 @@ if "from_unit" not in st.session_state:
 st.session_state.from_unit = unit_list[0]
 
 if "to_unit" not in st.session_state:
-st.session_state.to_unit = unit_list[1] if len(unit_list) > 1 else unit_list[0]
+st.session_state.to_unit = unit_list[0]
 
 # ==============================
 
-# 単位選択（合計幅＝値と同じ）
+# 単位選択
 
 # ==============================
 
@@ -129,8 +126,7 @@ with col1:
 from_unit = st.selectbox(
 "変換元",
 unit_list,
-index=unit_list.index(st.session_state.from_unit),
-key="from_unit_select"
+index=unit_list.index(st.session_state.from_unit)
 )
 
 with col_btn:
@@ -146,18 +142,15 @@ with col2:
 to_unit = st.selectbox(
 "変換先",
 unit_list,
-index=unit_list.index(st.session_state.to_unit),
-key="to_unit_select"
+index=unit_list.index(st.session_state.to_unit)
 )
-
-# セッション反映
 
 st.session_state.from_unit = from_unit
 st.session_state.to_unit = to_unit
 
 # ==============================
 
-# 変換計算
+# 計算
 
 # ==============================
 
@@ -166,15 +159,13 @@ result = base_value / units[category][to_unit]
 
 # ==============================
 
-# 結果表示（フォント統一 + コピー用）
+# 表示
 
 # ==============================
 
-st.markdown(f"""
-
-<div style="font-size:24px; font-family: Arial, sans-serif;">
-結果: {result}
-</div>
-""", unsafe_allow_html=True)
+st.markdown(
+f"<div style='font-size:24px; font-family: Arial;'>結果: {result}</div>",
+unsafe_allow_html=True
+)
 
 st.text_input("コピー用（値のみ）", value=str(result))
