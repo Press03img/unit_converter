@@ -81,7 +81,6 @@ units = {
 # ==============================
 
 col_input, _ = st.columns([1, 1])
-
 with col_input:
 value = st.number_input(
 "値",
@@ -97,7 +96,6 @@ key="input_value"
 # ==============================
 
 col_category, _ = st.columns([1, 1])
-
 with col_category:
 category = st.selectbox(
 "カテゴリ",
