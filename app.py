@@ -55,8 +55,8 @@ st.markdown("""
     max-width: 400px;
     padding-top: 1.7rem;
     padding-bottom: 0.5rem;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
     margin: 0 auto;
 }
 
