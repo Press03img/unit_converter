@@ -24,11 +24,35 @@ def format_unit(u):
     )
 
 # ==============================
-# 変換処理
+# 変換処理（温度の特殊計算に対応）
 # ==============================
 def convert(value, from_unit, to_unit, category):
-    base = value * units[category][from_unit]
-    return base / units[category][to_unit]
+    # 温度カテゴリの場合（足し算・引き算が必要なため特殊処理）
+    if category == "温度":
+        # 1. まず全て摂氏(C)に正規化
+        if from_unit == "℃":
+            celsius = value
+        elif from_unit == "℉":
+            celsius = (value - 32) * 5/9
+        elif from_unit == "K":
+            celsius = value - 273.15
+        else:
+            celsius = value
+            
+        # 2. 摂氏から目的の単位へ変換
+        if to_unit == "℃":
+            return celsius
+        elif to_unit == "℉":
+            return (celsius * 9/5) + 32
+        elif to_unit == "K":
+            return celsius + 273.15
+        else:
+            return celsius
+            
+    # 通常の単位カテゴリの場合（比率計算）
+    else:
+        base = value * units[category][from_unit]
+        return base / units[category][to_unit]
 
 # ==============================
 # セッション初期化
@@ -39,28 +63,15 @@ if "from_unit" not in st.session_state:
     st.session_state.to_unit = list(units[first_cat].keys())[1]
 
 # ==============================
-# CSS（余白修正版）
+# CSS
 # ==============================
 st.markdown("""
 <style>
-
 .title {
-    font-size: 20px;   /* ←ここで自由に調整 */
+    font-size: 20px;
     font-weight: 700;
     margin-bottom: 10px;
 }
-
-/* コンテナ幅固定＋余白削減 */
-.block-container {
-    max-width: 400px;
-    padding-top: 1.7rem;
-    padding-bottom: 0.5rem;
-    padding-left: 0.2rem;
-    padding-right: 0.2rem;
-    margin: 0 auto;
-}
-
-/* コンテナ */
 .block-container {
     max-width: 400px;
     padding-top: 1.5rem;
@@ -69,32 +80,22 @@ st.markdown("""
     padding-right: 0.5rem;
     margin: 0 auto;
 }
-
-/* ★カラム強制横並び */
 [data-testid="column"] {
     flex: 1 1 0% !important;
 }
-
-/* 下余白を削除 */
 section.main > div {
     padding-bottom: 0rem;
 }
-
-/* UIサイズ統一 */
 .stButton button {
     height: 48px;
     width: 100%;
 }
-
 input {
     height: 48px !important;
 }
-
 div[data-baseweb="select"] > div {
     height: 48px;
 }
-
-/* 結果表示 */
 .result-box {
     background-color: #dff0d8;
     padding: 10px;
@@ -102,8 +103,8 @@ div[data-baseweb="select"] > div {
     height: 48px;
     display: flex;
     align-items: center;
+    font-weight: bold;
 }
-
 </style>
 """, unsafe_allow_html=True)
 
@@ -120,12 +121,12 @@ with col1:
 with col2:
     value = st.number_input("入力値", value=0.0)
 
-# 単位リスト
+# 単位リストの取得
 unit_list = list(units[category].keys())
 unit_display = [format_unit(u) for u in unit_list]
 unit_map = dict(zip(unit_display, unit_list))
 
-# 安全補正
+# 安全補正（カテゴリ切り替え時に存在しない単位を参照しないようにする）
 if st.session_state.from_unit not in unit_list:
     st.session_state.from_unit = unit_list[0]
 if st.session_state.to_unit not in unit_list:
@@ -172,6 +173,7 @@ with col6:
 
 with col7:
     if "result" in st.session_state:
+        # 変換結果の表示（温度の場合は桁数を少し調整しても良いかもしれません）
         st.markdown(
             f"<div class='result-box'>{st.session_state.result:.6g} {format_unit(st.session_state.to_unit)}</div>",
             unsafe_allow_html=True
