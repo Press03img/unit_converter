@@ -132,15 +132,6 @@ units = {
 },
 
 # ======================
-# 温度（識別用）
-# ======================
-"温度": {
-    "℃":"C",
-    "℉":"F",
-    "K":"K"
-},
-
-# ======================
 # 時間
 # ======================
 "時間": {
@@ -153,38 +144,3 @@ units = {
 }
 
 }
-
-# ======================
-# 変換関数
-# ======================
-def convert(value, from_unit, to_unit, category):
-
-    # ===== 温度 =====
-    if category == "温度":
-
-        # → ℃へ統一
-        if from_unit == "℃":
-            temp_c = value
-        elif from_unit == "℉":
-            temp_c = (value - 32) * 5/9
-        elif from_unit == "K":
-            temp_c = value - 273.15
-        else:
-            raise ValueError("温度単位が不正")
-
-        # → 出力
-        if to_unit == "℃":
-            return temp_c
-        elif to_unit == "℉":
-            return temp_c * 9/5 + 32
-        elif to_unit == "K":
-            return temp_c + 273.15
-        else:
-            raise ValueError("温度単位が不正")
-
-    # ===== 通常換算 =====
-    try:
-        base = value * units[category][from_unit]
-        return base / units[category][to_unit]
-    except KeyError:
-        raise ValueError("単位またはカテゴリが不正")
