@@ -50,10 +50,6 @@ st.markdown("""
     margin-bottom: 10px;
 }
 
-[data-testid="column"] {
-    flex: 1 1 0% !important;
-}
-
 /* コンテナ幅固定＋余白削減 */
 .block-container {
     max-width: 400px;
