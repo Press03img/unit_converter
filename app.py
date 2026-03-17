@@ -60,6 +60,21 @@ st.markdown("""
     margin: 0 auto;
 }
 
+/* コンテナ */
+.block-container {
+    max-width: 400px;
+    padding-top: 1.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    margin: 0 auto;
+}
+
+/* ★カラム強制横並び */
+[data-testid="column"] {
+    flex: 1 1 0% !important;
+}
+
 /* 下余白を削除 */
 section.main > div {
     padding-bottom: 0rem;
