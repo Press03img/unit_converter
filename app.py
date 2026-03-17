@@ -9,7 +9,10 @@ st.set_page_config(page_title="単位換算ツール", layout="wide")
 st.write("")
 st.write("")
 
-st.header("単位換算ツール")
+st.markdown(
+    "<div class='title'>単位換算ツール</div>",
+    unsafe_allow_html=True
+)
 
 # ==============================
 # 上付き表示
@@ -40,6 +43,12 @@ if "from_unit" not in st.session_state:
 # ==============================
 st.markdown("""
 <style>
+
+.title {
+    font-size: 24px;   /* ←ここで自由に調整 */
+    font-weight: 700;
+    margin-bottom: 10px;
+}
 
 /* コンテナ幅固定＋余白削減 */
 .block-container {
