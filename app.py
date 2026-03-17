@@ -1,5 +1,5 @@
 import streamlit as st
-from units import units, convert
+from units import units
 
 # ==============================
 # ページ設定
