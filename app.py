@@ -38,6 +38,18 @@ units = {
 }
 
 # ==============================
+# 上付き変換
+# ==============================
+def format_unit(unit):
+    sup_map = {
+        "^2": "²",
+        "^3": "³"
+    }
+    for k, v in sup_map.items():
+        unit = unit.replace(k, v)
+    return unit
+
+# ==============================
 # 変換処理
 # ==============================
 def convert(value, from_unit, to_unit, category):
@@ -89,7 +101,11 @@ with col2:
 
 unit_list = list(units[category].keys())
 
-# 初期値保持
+# 上付き表示用
+unit_display = [format_unit(u) for u in unit_list]
+unit_map = dict(zip(unit_display, unit_list))
+
+# 初期状態
 if "from_unit" not in st.session_state:
     st.session_state.from_unit = unit_list[0]
 if "to_unit" not in st.session_state:
@@ -101,16 +117,31 @@ if "to_unit" not in st.session_state:
 col3, col4, col5 = st.columns([2,1,2])
 
 with col3:
-    from_unit = st.selectbox("変換前", unit_list, key="from_unit")
+    from_disp = st.selectbox(
+        "変換前",
+        unit_display,
+        index=unit_list.index(st.session_state.from_unit)
+    )
+    from_unit = unit_map[from_disp]
 
 with col4:
     st.markdown("<br>", unsafe_allow_html=True)
     if st.button("⇄"):
         st.session_state.from_unit, st.session_state.to_unit = \
             st.session_state.to_unit, st.session_state.from_unit
+        st.rerun()
 
 with col5:
-    to_unit = st.selectbox("変換後", unit_list, key="to_unit")
+    to_disp = st.selectbox(
+        "変換後",
+        unit_display,
+        index=unit_list.index(st.session_state.to_unit)
+    )
+    to_unit = unit_map[to_disp]
+
+# 状態更新
+st.session_state.from_unit = from_unit
+st.session_state.to_unit = to_unit
 
 # ==============================
 # 3行目：[変換ボタン][結果]
@@ -123,4 +154,4 @@ with col6:
 with col7:
     if convert_btn:
         result = convert(value, from_unit, to_unit, category)
-        st.success(f"{result:.6g} {to_unit}")
+        st.success(f"{result:.6g} {format_unit(to_unit)}")
