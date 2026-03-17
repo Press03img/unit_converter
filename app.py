@@ -45,7 +45,7 @@ st.markdown("""
 <style>
 
 .title {
-    font-size: 12px;   /* ←ここで自由に調整 */
+    font-size: 20px;   /* ←ここで自由に調整 */
     font-weight: 700;
     margin-bottom: 10px;
 }
