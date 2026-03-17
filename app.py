@@ -3,6 +3,18 @@ import streamlit as st
 st.set_page_config(page_title="Unit Converter", layout="centered")
 
 # ==============================
+# 幅制限（50%）
+# ==============================
+st.markdown("""
+<style>
+.main > div {
+    max-width: 600px;
+    margin: auto;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ==============================
 # 数値表示フォーマット
 # ==============================
 def format_number(x):
@@ -97,14 +109,17 @@ if st.session_state.to_unit not in unit_list:
 
 
 # ==============================
-# 入力
+# 入力（幅制限）
 # ==============================
-value = st.number_input(
-    "値",
-    value=0.0,
-    step=1.0,
-    key="input_value"
-)
+col_input, _ = st.columns([1,1])
+
+with col_input:
+    value = st.number_input(
+        "値",
+        value=0.0,
+        step=1.0,
+        key="input_value"
+    )
 
 
 # ==============================
