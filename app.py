@@ -5,7 +5,7 @@ from units import units   # ← ★ここが重要
 # ページ設定
 # ==============================
 st.set_page_config(page_title="単位換算ツール", layout="wide")
-st.markdown("<h2>単位換算ツール</h2>", unsafe_allow_html=True)
+st.markdown("<h4>単位換算ツール</h4>", unsafe_allow_html=True)
 
 # ==============================
 # 上付き表示
