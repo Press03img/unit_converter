@@ -53,7 +53,7 @@ st.markdown("""
 /* コンテナ幅固定＋余白削減 */
 .block-container {
     max-width: 400px;
-    padding-top: 1.5rem;
+    padding-top: 1.7rem;
     padding-bottom: 0.5rem;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
