@@ -5,6 +5,7 @@ from units import units   # ← ★ここが重要
 # ページ設定
 # ==============================
 st.set_page_config(page_title="単位換算", layout="centered")
+st.set_page_config(page_title="単位換算ツール", layout="wide")
 st.header("単位換算ツール")
 
 # ==============================
