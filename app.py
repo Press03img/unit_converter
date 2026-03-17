@@ -6,7 +6,7 @@ import streamlit as st
 st.set_page_config(layout="centered")
 
 # ==============================
-# 単位定義（削除なし＋追加済）
+# 単位定義
 # ==============================
 units = {
     "長さ": {
@@ -41,13 +41,7 @@ units = {
 # 上付き変換
 # ==============================
 def format_unit(unit):
-    sup_map = {
-        "^2": "²",
-        "^3": "³"
-    }
-    for k, v in sup_map.items():
-        unit = unit.replace(k, v)
-    return unit
+    return unit.replace("^2", "²").replace("^3", "³")
 
 # ==============================
 # 変換処理
@@ -55,21 +49,11 @@ def format_unit(unit):
 def convert(value, from_unit, to_unit, category):
     if category == "温度":
         if from_unit == "C":
-            if to_unit == "F":
-                return value * 9/5 + 32
-            elif to_unit == "K":
-                return value + 273.15
+            return value * 9/5 + 32 if to_unit == "F" else value + 273.15 if to_unit == "K" else value
         elif from_unit == "F":
-            if to_unit == "C":
-                return (value - 32) * 5/9
-            elif to_unit == "K":
-                return (value - 32) * 5/9 + 273.15
+            return (value - 32) * 5/9 if to_unit == "C" else (value - 32) * 5/9 + 273.15 if to_unit == "K" else value
         elif from_unit == "K":
-            if to_unit == "C":
-                return value - 273.15
-            elif to_unit == "F":
-                return (value - 273.15) * 9/5 + 32
-        return value
+            return value - 273.15 if to_unit == "C" else (value - 273.15) * 9/5 + 32 if to_unit == "F" else value
     else:
         base = value * units[category][from_unit]
         return base / units[category][to_unit]
@@ -89,7 +73,7 @@ st.markdown("""
 st.title("単位換算")
 
 # ==============================
-# 1行目：[カテゴリ][入力値]
+# 1行目
 # ==============================
 col1, col2 = st.columns([1,1])
 
@@ -101,18 +85,30 @@ with col2:
 
 unit_list = list(units[category].keys())
 
-# 上付き表示用
-unit_display = [format_unit(u) for u in unit_list]
-unit_map = dict(zip(unit_display, unit_list))
+# ==============================
+# ★ ここが重要：カテゴリ変更時のリセット
+# ==============================
+if "prev_category" not in st.session_state:
+    st.session_state.prev_category = category
 
-# 初期状態
+if st.session_state.prev_category != category:
+    st.session_state.from_unit = unit_list[0]
+    st.session_state.to_unit = unit_list[1] if len(unit_list) > 1 else unit_list[0]
+    st.session_state.prev_category = category
+
+# 初期値
 if "from_unit" not in st.session_state:
     st.session_state.from_unit = unit_list[0]
+
 if "to_unit" not in st.session_state:
     st.session_state.to_unit = unit_list[1] if len(unit_list) > 1 else unit_list[0]
 
+# 表示用
+unit_display = [format_unit(u) for u in unit_list]
+unit_map = dict(zip(unit_display, unit_list))
+
 # ==============================
-# 2行目：[変換前][入替][変換後]
+# 2行目
 # ==============================
 col3, col4, col5 = st.columns([2,1,2])
 
@@ -144,7 +140,7 @@ st.session_state.from_unit = from_unit
 st.session_state.to_unit = to_unit
 
 # ==============================
-# 3行目：[変換ボタン][結果]
+# 3行目
 # ==============================
 col6, col7 = st.columns([1,1])
 
