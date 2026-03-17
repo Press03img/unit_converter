@@ -1,13 +1,13 @@
 import streamlit as st
-from units import units   # ← ★ここが重要
+from units import units
 
 # ==============================
 # ページ設定
 # ==============================
 st.set_page_config(page_title="単位換算ツール", layout="wide")
 
-st.write("")  # ← これを1行入れる（余白確保）
-st.write("")  # ← これを1行入れる（余白確保）
+st.write("")
+st.write("")
 
 st.header("単位換算ツール")
 
@@ -36,24 +36,41 @@ if "from_unit" not in st.session_state:
     st.session_state.to_unit = list(units[first_cat].keys())[1]
 
 # ==============================
-# CSS
+# CSS（余白修正版）
 # ==============================
 st.markdown("""
 <style>
+
+/* コンテナ幅固定＋余白削減 */
 .block-container {
     max-width: 400px;
-    padding-top: 1.5rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    margin: 0 auto;
 }
+
+/* 下余白を削除 */
+section.main > div {
+    padding-bottom: 0rem;
+}
+
+/* UIサイズ統一 */
 .stButton button {
     height: 48px;
     width: 100%;
 }
+
 input {
     height: 48px !important;
 }
+
 div[data-baseweb="select"] > div {
     height: 48px;
 }
+
+/* 結果表示 */
 .result-box {
     background-color: #dff0d8;
     padding: 10px;
@@ -62,6 +79,7 @@ div[data-baseweb="select"] > div {
     display: flex;
     align-items: center;
 }
+
 </style>
 """, unsafe_allow_html=True)
 
