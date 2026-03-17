@@ -7,6 +7,7 @@ from units import units   # ← ★ここが重要
 st.set_page_config(page_title="単位換算ツール", layout="wide")
 
 st.write("")  # ← これを1行入れる（余白確保）
+st.write("")  # ← これを1行入れる（余白確保）
 
 st.header("単位換算ツール")
 
