@@ -119,7 +119,7 @@ with col1:
     category = st.selectbox("カテゴリ", list(units.keys()))
 
 with col2:
-    value = st.number_input("入力値", value=0.0)
+    value = st.number_input("入力値", value=0.0, format="%g")
 
 # 単位リストの取得
 unit_list = list(units[category].keys())
